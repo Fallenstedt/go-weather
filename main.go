@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/Fallenstedt/weather/render"
 	"github.com/Fallenstedt/weather/weather"
 )
 
@@ -18,15 +19,15 @@ func main() {
 }
 
 func run(out io.Writer) error {
+	r := render.Render{Out: out}
+
 	w := weather.New("https://api.weather.gov/gridpoints/PQR/108,103/forecast", "https://api.weather.gov/alerts/active?zone=ORZ006")
-  
 
-  _, err := w.FetchForecast()
+	forecast, err := w.FetchForecast()
 
-  if err != nil {
-    out.Write([]byte(err.Error()))
-  }
+	if err != nil {
+		return err
+	}
 
-  return nil
-
+	return r.RenderForecast(&forecast)
 }
