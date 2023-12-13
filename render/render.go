@@ -31,7 +31,7 @@ func (r *Render) RenderForecast(ctx context.Context, forecast *[]weather.Forecas
 			t.AppendSeparator()
 		}
 
-	t.SetStyle(table.StyleDefault)
+	t.SetStyle(table.StyleRounded)
 	t.Render()
 	}
 
