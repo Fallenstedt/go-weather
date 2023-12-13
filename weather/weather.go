@@ -50,10 +50,13 @@ type Weather struct {
 	activeAlertsUrl string
 }
 
-func New(forecastUrl string, activeAlertsUrl string) Weather {
+func New(args struct {
+	ForecastUrl     string
+	ActiveAlertsUrl string
+}) Weather {
 	return Weather{
-		forecastUrl,
-		activeAlertsUrl,
+		forecastUrl:     args.ForecastUrl,
+		activeAlertsUrl: args.ActiveAlertsUrl,
 	}
 }
 
