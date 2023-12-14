@@ -14,6 +14,11 @@ import (
 
 func main() {
 
+	flag.Usage = func() {
+		fmt.Fprint(flag.CommandLine.Output(), "%s tool. Developed by Alex Fallenstedt\n", os.Args[0])
+		fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
+		flag.PrintDefaults()
+	}
 	detail := flag.Int("detail", 0, "The day number to get a detailed forecast for")
 	flag.Parse()
 
@@ -34,9 +39,11 @@ func run(out io.Writer, ctx context.Context) error {
 		ActiveAlertsUrl string
 	}{
 		ForecastUrl:     "https://api.weather.gov/gridpoints/PQR/108,103/forecast",
-		ActiveAlertsUrl: "https://api.weather.gov/alerts/active?zone=ORZ006",
+		ActiveAlertsUrl: "https://api.weather.gov/alerts?zone=ORC067",
 	})
 
+	weather, _ := w.FetchAlerts()
+	fmt.Println(weather)
 	forecast, err := w.FetchForecast()
 
 	if err != nil {
