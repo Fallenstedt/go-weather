@@ -7,8 +7,11 @@ import (
 	"net/http"
 )
 
-
 type IWeather interface {
+	New(args struct {
+		ForecastUrl     string
+		ActiveAlertsUrl string
+	}) Weather
 	FetchForecast() ([]Forecast, error)
 	FetchAlerts() ([]Alerts, error)
 }
@@ -28,7 +31,6 @@ func New(args struct {
 	}
 }
 
-
 func (w *Weather) FetchAlerts() ([]Alerts, error) {
 	var ar alertsResponse
 
@@ -42,16 +44,15 @@ func (w *Weather) FetchAlerts() ([]Alerts, error) {
 
 func (w *Weather) FetchForecast() ([]Forecast, error) {
 	var fr forecastReponse
-	 err := w.fetch(w.forecastUrl, &fr)
-		if err != nil {
+	err := w.fetch(w.forecastUrl, &fr)
+	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response, %w", err)
 	}
 
 	return fr.Properties.Periods, nil
 }
 
-
-func (w *Weather) fetch(url string, unmarshal interface{})  error {
+func (w *Weather) fetch(url string, unmarshal interface{}) error {
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("%w, %w", ErrFetchForecast, err)

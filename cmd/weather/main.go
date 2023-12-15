@@ -39,16 +39,18 @@ func run(out io.Writer, ctx context.Context) error {
 		ActiveAlertsUrl string
 	}{
 		ForecastUrl:     "https://api.weather.gov/gridpoints/PQR/108,103/forecast",
-		ActiveAlertsUrl: "https://api.weather.gov/alerts?zone=ORC067",
+		ActiveAlertsUrl: "https://api.weather.gov/alerts/active?zone=ORC067",
 	})
 
-	weather, _ := w.FetchAlerts()
-	fmt.Println(weather)
+	alerts, _ := w.FetchAlerts()
 	forecast, err := w.FetchForecast()
 
 	if err != nil {
 		return err
 	}
 
-	return r.RenderForecast(ctx, &forecast)
+	r.RenderForecast(ctx, &forecast)
+	r.RenderAlerts(ctx, &alerts)
+
+	return nil
 }

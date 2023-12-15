@@ -1,6 +1,5 @@
 package weather
 
-
 type forecastReponse struct {
 	Properties struct {
 		Periods []Forecast `json:"periods"`
@@ -34,4 +33,3 @@ type Forecast struct {
 	ShortForecast    string `json:"shortForecast"`
 	DetailedForecast string `json:"detailedForecast"`
 }
-
