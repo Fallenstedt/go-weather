@@ -7,9 +7,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/Fallenstedt/weather/render"
-	"github.com/Fallenstedt/weather/util"
-	"github.com/Fallenstedt/weather/weather"
+	"github.com/Fallenstedt/weather/common/render"
+	"github.com/Fallenstedt/weather/common/util"
+	"github.com/Fallenstedt/weather/common/weather"
 )
 
 func main() {

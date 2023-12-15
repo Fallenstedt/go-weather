@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Fallenstedt/weather/util"
-	"github.com/Fallenstedt/weather/weather"
+	"github.com/Fallenstedt/weather/common/util"
+	"github.com/Fallenstedt/weather/common/weather"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
