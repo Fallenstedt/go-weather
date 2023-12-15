@@ -30,23 +30,9 @@ func New(args struct {
 
 
 func (w *Weather) FetchAlerts() ([]Alerts, error) {
-	resp, err := http.Get(w.forecastUrl)
-	if err != nil {
-		return nil, fmt.Errorf("%w, %w", ErrFetchAlerts, err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%w, got status %d", ErrFetchAlerts, resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var ar alertsResponse
-	err = json.Unmarshal(body, &ar)
+
+	err := w.fetch(w.activeAlertsUrl, &ar)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response, %w", err)
 	}
@@ -55,26 +41,36 @@ func (w *Weather) FetchAlerts() ([]Alerts, error) {
 }
 
 func (w *Weather) FetchForecast() ([]Forecast, error) {
-	resp, err := http.Get(w.forecastUrl)
-	if err != nil {
-		return nil, fmt.Errorf("%w, %w", ErrFetchForecast, err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%w, got status %d", ErrFetchForecast, resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var fr forecastReponse
-	err = json.Unmarshal(body, &fr)
-	if err != nil {
+	 err := w.fetch(w.forecastUrl, &fr)
+		if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response, %w", err)
 	}
 
 	return fr.Properties.Periods, nil
+}
+
+
+func (w *Weather) fetch(url string, unmarshal interface{})  error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("%w, %w", ErrFetchForecast, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("%w, got status %d", ErrFetchForecast, resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, unmarshal)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal response, %w", err)
+	}
+
+	return nil
 }
