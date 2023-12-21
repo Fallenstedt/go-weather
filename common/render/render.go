@@ -34,6 +34,8 @@ func (r *Render) RenderAlerts(ctx context.Context, alerts *[]weather.Alerts) err
 			colorFn = greenBg
 		case "Severe":
 			colorFn = redBg
+		default: 
+			colorFn = redBg
 		}
 
 		colorFn.Fprintln(r.Out, fmt.Sprintf("%s - %s", a.Properties.MessageType,  a.Properties.Headline))
