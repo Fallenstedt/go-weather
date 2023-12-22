@@ -43,7 +43,6 @@ func (r *Render) RenderAlerts(ctx context.Context, alerts *[]weather.Alerts) err
 		bold.Fprintf(r.Out, "%s\n\n", a.Properties.Event)
 		fmt.Fprintf(r.Out, "%s\n\n", a.Properties.Description)
 		fmt.Fprintf(r.Out, "%s\n\n", a.Properties.Instruction)
-
 	}
 	return nil
 }
@@ -65,7 +64,7 @@ func (r *Render) RenderForecast(ctx context.Context, forecast *[]weather.Forecas
 			t.AppendSeparator()
 		}
 
-		t.SetStyle(table.StyleRounded)
+		t.SetStyle(table.StyleColoredGreenWhiteOnBlack)
 		t.Render()
 	}
 
