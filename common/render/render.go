@@ -17,12 +17,12 @@ type Render struct {
 
 func (r *Render) RenderAlerts(ctx context.Context, alerts *[]weather.Alerts) error {
 
-	redBg :=  color.New(color.FgWhite, color.Bold).Add(color.BgRed)
+	redBg := color.New(color.FgWhite, color.Bold).Add(color.BgRed)
 	// yellowBg :=  color.New(color.FgBlack).Add(color.BgHiYellow)
-	greenBg :=  color.New(color.FgBlack, color.Bold).Add(color.BgWhite)
+	greenBg := color.New(color.FgBlack, color.Bold).Add(color.BgWhite)
 	bold := color.New(color.Bold)
 
-	if (len(*alerts) == 0) {
+	if len(*alerts) == 0 {
 		bold.Fprintf(r.Out, "%s\n\n", "No alerts at this time")
 		return nil
 	}
@@ -34,11 +34,11 @@ func (r *Render) RenderAlerts(ctx context.Context, alerts *[]weather.Alerts) err
 			colorFn = greenBg
 		case "Severe":
 			colorFn = redBg
-		default: 
+		default:
 			colorFn = redBg
 		}
 
-		colorFn.Fprintln(r.Out, fmt.Sprintf("%s - %s", a.Properties.MessageType,  a.Properties.Headline))
+		colorFn.Fprintln(r.Out, fmt.Sprintf("%s - %s", a.Properties.MessageType, a.Properties.Headline))
 		fmt.Println()
 		bold.Fprintf(r.Out, "%s\n\n", a.Properties.Event)
 		fmt.Fprintf(r.Out, "%s\n\n", a.Properties.Description)

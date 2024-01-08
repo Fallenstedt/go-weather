@@ -7,7 +7,7 @@ type alertsResponse struct {
 }
 
 type Alerts struct {
-	Id         string `json:"id"`
+	Id         string          `json:"id"`
 	Properties AlertProperties `json:"properties"`
 }
 

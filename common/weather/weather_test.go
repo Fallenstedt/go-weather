@@ -8,7 +8,6 @@ import (
 	"github.com/Fallenstedt/weather/common/weather"
 )
 
-
 func TestFetchForcast(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
@@ -122,11 +121,14 @@ func TestFetchForcast(t *testing.T) {
 	}))
 	defer server.Close()
 
-	w := weather.New(struct{ForecastUrl string; ActiveAlertsUrl string}{
-		ForecastUrl: server.URL,
+	w := weather.New(struct {
+		ForecastUrl     string
+		ActiveAlertsUrl string
+	}{
+		ForecastUrl:     server.URL,
 		ActiveAlertsUrl: server.URL,
 	})
- 
+
 	_, err := w.FetchForecast()
 
 	if err != nil {
