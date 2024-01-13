@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/Fallenstedt/weather/common/util"
 	"github.com/Fallenstedt/weather/common/weather"
@@ -69,6 +70,13 @@ func (r *Render) RenderForecast(ctx context.Context, forecast *[]weather.Forecas
 	}
 
 	return nil
+}
+
+func (r *Render) RenderRadar(ctx context.Context, url string) error {
+	_, cancel := context.WithTimeout(ctx, time.Second * 5)
+	defer cancel()
+	return util.OpenBrowser(url)
+
 }
 
 func (r *Render) buildRow(f *weather.Forecast) table.Row {

@@ -37,9 +37,11 @@ func run(out io.Writer, ctx context.Context) error {
 	w := weather.New(struct {
 		ForecastUrl     string
 		ActiveAlertsUrl string
+		
 	}{
 		ForecastUrl:     "https://api.weather.gov/gridpoints/PQR/108,103/forecast",
 		ActiveAlertsUrl: "https://api.weather.gov/alerts/active?zone=ORC067",
+	
 	})
 
 	alerts, _ := w.FetchAlerts()
@@ -51,6 +53,6 @@ func run(out io.Writer, ctx context.Context) error {
 
 	r.RenderForecast(ctx, &forecast)
 	r.RenderAlerts(ctx, &alerts)
+	return r.RenderRadar(ctx, "https://radar.weather.gov/station/krtx/standard")
 
-	return nil
 }

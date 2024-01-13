@@ -19,6 +19,7 @@ type IWeather interface {
 type Weather struct {
 	forecastUrl     string
 	activeAlertsUrl string
+	
 }
 
 func New(args struct {
@@ -28,6 +29,7 @@ func New(args struct {
 	return Weather{
 		forecastUrl:     args.ForecastUrl,
 		activeAlertsUrl: args.ActiveAlertsUrl,
+		
 	}
 }
 
