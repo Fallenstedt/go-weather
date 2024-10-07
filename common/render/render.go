@@ -59,7 +59,7 @@ func (r *Render) RenderForecast(ctx context.Context, forecast *[]weather.Forecas
 	} else {
 		t := table.NewWriter()
 		t.SetOutputMirror(r.Out)
-		t.AppendHeader(table.Row{"#", "Day", "Temp", "Wind", "Precipitation", "Forecast"})
+		t.AppendHeader(table.Row{"Date", "Day", "Temp", "Wind", "Precipitation", "Forecast"})
 		for _, f := range *forecast {
 			t.AppendRow(r.buildRow(&f))
 			t.AppendSeparator()
@@ -80,7 +80,16 @@ func (r *Render) RenderRadar(ctx context.Context, url string) error {
 }
 
 func (r *Render) buildRow(f *weather.Forecast) table.Row {
-	return table.Row{f.Number, f.Name, r.getTemp(f), r.getWind(f), r.getPrecipitation(f), f.ShortForecast}
+	t, err := time.Parse(time.RFC3339, f.StartTime)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		return table.Row{}
+	}
+	day := t.Day()
+	daySuffix := r.getDaySuffix(day)
+	formattedTime := fmt.Sprintf("%s %d%s", t.Format("Jan"), day, daySuffix)
+
+	return table.Row{formattedTime, f.Name, r.getTemp(f), r.getWind(f), r.getPrecipitation(f), f.ShortForecast}
 }
 
 func (r *Render) getTemp(f *weather.Forecast) string {
@@ -93,4 +102,20 @@ func (r *Render) getWind(f *weather.Forecast) string {
 
 func (r *Render) getPrecipitation(f *weather.Forecast) string {
 	return fmt.Sprintf("%d%s", f.ProbabilityOfPrecipitation.Value, "%")
+}
+
+func (r *Render) getDaySuffix(day int) string {
+	if day >= 11 && day <= 13 {
+		return "th"
+	}
+	switch day % 10 {
+	case 1:
+		return "st"
+	case 2:
+		return "nd"
+	case 3:
+		return "rd"
+	default:
+		return "th"
+	}
 }
