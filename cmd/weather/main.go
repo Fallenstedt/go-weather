@@ -54,5 +54,6 @@ func run(out io.Writer, ctx context.Context) error {
 	r.RenderForecast(ctx, &forecast)
 	r.RenderAlerts(ctx, &alerts)
 	return r.RenderRadar(ctx, "https://radar.weather.gov/station/krtx/standard")
+	return nil;
 
 }
