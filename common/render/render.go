@@ -49,14 +49,8 @@ func (r *Render) RenderAlerts(ctx context.Context, alerts *[]weather.Alerts) err
 }
 
 func (r *Render) RenderForecast(ctx context.Context, forecast *[]weather.Forecast) error {
-	flags := util.GetFlagsFromContext(ctx)
-	isDetailOnly := flags.Detail > 0 && flags.Detail <= len(*forecast)
-
-	if isDetailOnly {
-		f := (*forecast)[flags.Detail-1]
-		fmt.Fprintln(r.Out, f.Name, " | ", r.getTemp(&f), " | ", fmt.Sprintf("Wind %s", r.getWind(&f)))
-		fmt.Fprintln(r.Out, f.DetailedForecast)
-	} else {
+	
+	
 		t := table.NewWriter()
 		t.SetOutputMirror(r.Out)
 		t.AppendHeader(table.Row{"Date", "Day", "Temp", "Wind", "Precipitation", "Forecast"})
@@ -67,7 +61,7 @@ func (r *Render) RenderForecast(ctx context.Context, forecast *[]weather.Forecas
 
 		t.SetStyle(table.StyleColoredGreenWhiteOnBlack)
 		t.Render()
-	}
+	
 
 	return nil
 }

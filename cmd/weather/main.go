@@ -7,41 +7,78 @@ import (
 	"io"
 	"os"
 
+	"github.com/Fallenstedt/weather/common/config"
 	"github.com/Fallenstedt/weather/common/render"
-	"github.com/Fallenstedt/weather/common/util"
 	"github.com/Fallenstedt/weather/common/weather"
 )
 
 func main() {
 
 	flag.Usage = func() {
-		fmt.Fprint(flag.CommandLine.Output(), "%s tool. Developed by Alex Fallenstedt\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "%s tool. Developed by Alex Fallenstedt\n", os.Args[0])
 		fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
+		fmt.Fprintln(flag.CommandLine.Output(), "\nCommands:")
+		fmt.Fprintln(flag.CommandLine.Output(), "  list        List configured locations (edit ~/.weathercli.yml to add/remove)")
+		fmt.Fprintln(flag.CommandLine.Output(), "\nFlags:")
 		flag.PrintDefaults()
 	}
-	detail := flag.Int("detail", 0, "The day number to get a detailed forecast for")
+	// location flag controls which configured location to use
+	var location string
+	flag.StringVar(&location, "location", "", "location name from config (overrides default)")
+
 	flag.Parse()
 
-	ctx := context.WithValue(context.Background(), util.ContextKeyFlags, util.Flags{Detail: *detail})
 
-	if err := run(os.Stdout, ctx); err != nil {
+	if err := run(os.Stdout, context.Background(), location); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
 }
+func run(out io.Writer, ctx context.Context, locationFlag string) error {
+	// If no args and no location flag, show help and exit
+	args := flag.Args()
+	if len(args) == 0 && locationFlag == "" {
+		flag.Usage()
+		return nil
+	}
 
-func run(out io.Writer, ctx context.Context) error {
+	// Load config and handle "list" command or selected location
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return err
+	}
+
+	// If first positional arg is "list", show available locations
+	if len(args) > 0 && args[0] == "list" {
+		fmt.Fprintln(out, "Configured locations:")
+		for _, name := range config.ListLocations(cfg) {
+			fmt.Fprintln(out, "-", name)
+		}
+		return nil
+	}
+
+	// Determine which location to use
+	locName := locationFlag
+	if locName == "" {
+		// If flag wasn't provided, try env var or default from config
+		locName = cfg.Default
+	}
+
+	loc, ok := config.GetLocation(cfg, locName)
+	if !ok {
+		return fmt.Errorf("location '%s' not found in config", locName)
+	}
+
 	r := render.Render{Out: out}
 
 	w := weather.New(struct {
 		ForecastUrl     string
 		ActiveAlertsUrl string
-		
 	}{
-		ForecastUrl:     "https://api.weather.gov/gridpoints/PQR/108,103/forecast",
-		ActiveAlertsUrl: "https://api.weather.gov/alerts/active?zone=ORC067",
-	
+		ForecastUrl:     loc.ForecastUrl,
+		ActiveAlertsUrl: loc.ActiveAlertsUrl,
+
 	})
 
 	alerts, _ := w.FetchAlerts()
@@ -53,6 +90,6 @@ func run(out io.Writer, ctx context.Context) error {
 
 	r.RenderForecast(ctx, &forecast)
 	r.RenderAlerts(ctx, &alerts)
-	return r.RenderRadar(ctx, "https://radar.weather.gov/station/krtx/standard")
+	return r.RenderRadar(ctx, loc.RadarUrl)
 
 }
