@@ -17,24 +17,34 @@ type Location struct {
 }
 
 type Config struct {
-	APIKey    string              `yaml:"api_key"`
 	Locations map[string]Location `yaml:"locations"`
 	Default   string              `yaml:"default_location"`
 }
 
 // Default configuration values with an initial `beaverton` location.
 var defaultConfig = Config{
-	APIKey: "YOUR_DEFAULT_API_KEY",
 	Locations: map[string]Location{
 		"beaverton": {
-			Name:            "beaverton",
+			Name:            "Beaverton",
 			ForecastUrl:     "https://api.weather.gov/gridpoints/PQR/108,103/forecast",
 			ActiveAlertsUrl: "https://api.weather.gov/alerts/active?zone=ORC067",
 			RadarUrl:        "https://radar.weather.gov/station/krtx/standard",
 		},
+		"mthood":{
+			Name: "Mt Hood",
+			ForecastUrl: "https://api.weather.gov/gridpoints/PQR/143,89/forecast",
+			ActiveAlertsUrl: "https://api.weather.gov/alerts/active?zone=ORZ126",
+			RadarUrl: "https://radar.weather.gov/station/krtx/standard",
+		},
 	},
 	Default: "beaverton",
 }
+
+  // mthood:
+  //   name: Mt Hood
+  //   forecast_url: https://api.weather.gov/gridpoints/PQR/143,89/forecast
+  //   active_alerts_url: https://api.weather.gov/alerts/active?zone=ORZ126
+  //   radar_url: https://radar.weather.gov/station/krtx/standard
 
 // getConfigPath returns the path for the config file in the user's home directory.
 func getConfigPath() (string, error) {
